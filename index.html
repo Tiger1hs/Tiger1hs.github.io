@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>昼 | ZOOM”</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        denim: {
+                            dark: '#000000',
+                            medium: '#252525',
+                            light: '#ffffff'
+                        },
+                        natural: {
+                            beige: '#F2EFE9',
+                            brown: '#8B5A2B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['宋体', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            }
+            .text-shadow-lg {
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            }
+            .backdrop-blur {
+                backdrop-filter: blur(8px);
+            }
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        body {
+            font-family: '宋体', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+        
+        .fade-in {
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-zoom {
+            transition: transform 0.5s ease;
+        }
+        
+        .hover-zoom:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+    <!-- 导航栏 -->
+    <header class="fixed w-full z-50 transition-all duration-500" id="navbar">
+        <div class="container mx-auto px-4 md:px-16 py-6 flex justify-between items-center">
+            <a href="#" class="text-5xl font-medium tracking-wider">昼 | ZOOM</a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex space-x-12">
+                <a href="#about" class="text-lg hover:text-natural-beige transition-colors">百业介绍</a>
+                <a href="events.html" class="text-lg hover:text-natural-beige transition-colors">成员</a>
+                <a href="#gallery" class="text-lg hover:text-natural-beige transition-colors">百业精彩瞬间</a>
+                <a href="#info" class="text-lg hover:text-natural-beige transition-colors">关于须知</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button class="md:hidden text-2xl" id="menuBtn">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden bg-denim-dark/90 backdrop-blur hidden" id="mobileMenu">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#about" class="py-2 hover:text-natural-beige transition-colors">百业介绍</a>
+                <a href="#events" class="py-2 hover:text-natural-beige transition-colors">成员</a>
+                <a href="#gallery" class="py-2 hover:text-natural-beige transition-colors">百业精彩瞬间</a>
+                <a href="#info" class="py-2 hover:text-natural-beige transition-colors">关于须知</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区域：视频背景 + 中央图片 -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- 视频背景 -->
+        <video class="video-bg" id="bgVideo" loop playsinline autoplay>
+            <source src="https://gitee.com/Tiger167/Tiger1hs.github.io/raw/main/denim-matsuri.mp4?timestamp=1690000000" type="video/mp4"">
+            <!-- 视频无法加载时显示的备用背景 -->
+            <img src="https://picsum.photos/id/1071/1920/1080" alt="牛仔布料纹理背景" class="w-full h-full object-cover">
+            <img src="备用背景图地址" alt="备用背景" class="w-full h-full object-cover">
+        </video>
+
+        <!-- 声音控制按钮 -->
+    <button id="volumeControl" class="absolute top-4 right-4 z-20 bg-black/50 hover:bg-black/70 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300">
+        <i class="fa fa-volume-up text-xl"></i>
+    </button>
+
+        <!-- 半透明遮罩 -->
+        <div class="overlay"></div>
+        
+        <!-- 中央主图 -->
+        <div class="relative z-10 fade-in">
+            <img src="https://gitee.com/Tiger167/Tiger1hs.github.io/raw/main/hero-overlay.jpg"デニム祭りメイン画像" class="max-w-full max-h-[75vh] object-contain hover-zoom cursor-pointer" id="heroImage"">
+        </div>
+        
+        <!-- 向下滚动指示 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#about" class="text-white text-3xl">
+                <i class="fa fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 关于部分 -->
+    <section id="about" class="py-20 bg-natural-beige text-denim-dark">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-5xl md:text-6xl font-bold mb-10 tracking-wider">昼 | ZOOM</h2>
+                <p class="text-3xl mb-6 leading-relaxed">飞雪断刀客，喋血不留痕。</p>
+                <p class="text-3xl mb-8 leading-relaxed">明知山有虎，偏向虎山行。</p>
+                <p class="text-3xl mb-10 leading-relaxed">江湖侠客气，傲气任我行。</p>
+                <div class="inline-block border-b border-denim-medium pb-1">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 图片展示部分 -->
+    <section class="py-16 bg-black">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="overflow-hidden">
+                    <img src="https://picsum.photos/id/1060/800/1000" alt="デニム製品展示" class="w-full h-96 object-cover hover-zoom">
+                </div>
+                <div class="overflow-hidden">
+                    <img src="https://picsum.photos/id/1062/800/1000" alt="職人の製作風景" class="w-full h-96 object-cover hover-zoom">
+                </div>
+                <div class="overflow-hidden">
+                    <img src="https://picsum.photos/id/1072/800/1000" alt="デニムの詳細" class="w-full h-96 object-cover hover-zoom">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 活动部分 -->
+    <section id="events" class="py-20 bg-denim-dark">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-light mb-16 text-center tracking-wider">百业日记</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- 活动1 -->
+                    <div class="bg-denim-medium/30 p-6 rounded-lg hover:bg-denim-medium/50 transition-colors">
+                        <div class="text-natural-beige text-2xl mb-4">
+                            <i class="fa fa-scissors mr-3"></i>
+                        </div>
+                        <h3 class="text-xl mb-3">日常</h3>
+                        <p class="text-light mb-4">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx。</p>
+                    </div>
+                    
+                    <!-- 活动2 -->
+                    <div class="bg-denim-medium/30 p-6 rounded-lg hover:bg-denim-medium/50 transition-colors">
+                        <div class="text-natural-beige text-2xl mb-4">
+                            <i class="fa fa-history mr-3"></i>
+                        </div>
+                        <h3 class="text-xl mb-3">回溯</h3>
+                        <p class="text-light mb-4">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx。</p>
+                    </div>
+                    
+                    <!-- 活动3 -->
+                    <div class="bg-denim-medium/30 p-6 rounded-lg hover:bg-denim-medium/50 transition-colors">
+                        <div class="text-natural-beige text-2xl mb-4">
+                            <i class="fa fa-camera mr-3"></i>
+                        </div>
+                        <h3 class="text-xl mb-3">照片</h3>
+                        <p class="text-light mb-4">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x。</p>
+                    </div>
+                    
+                    <!-- 活动4 -->
+                    <div class="bg-denim-medium/30 p-6 rounded-lg hover:bg-denim-medium/50 transition-colors">
+                        <div class="text-natural-beige text-2xl mb-4">
+                            <i class="fa fa-glass mr-3"></i>
+                        </div>
+                        <h3 class="text-xl mb-3">百业活动</h3>
+                        <p class="text-light mb-4">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxx。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 画廊部分 -->
+    <section id="gallery" class="py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-light mb-16 text-center tracking-wider">「百业精彩瞬间」</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <img src="https://picsum.photos/id/1058/600/600" alt="デニム製品展示" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1063/600/600" alt="デニム生地の質感" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1066/600/600" alt="職人の仕事風景" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1069/600/600" alt="デニム祭りの様子" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1070/600/600" alt="デニムのディテール" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1073/600/600" alt="展示会場の様子" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1074/600/600" alt="デニムと自然素材" class="w-full h-64 object-cover hover-zoom">
+                <img src="https://picsum.photos/id/1075/600/600" alt="イベント参加者" class="w-full h-64 object-cover hover-zoom">
+            </div>
+        </div>
+    </section>
+
+    <!-- 信息部分 -->
+    <section id="info" class="py-20 bg-natural-beige text-denim-dark">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-light mb-16 text-center tracking-wider">关于须知</h2>
+            
+            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <h3 class="text-2xl mb-6 font-light">情报</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="fa fa-university text-denim-medium mr-3"></i>
+                            <span>【昼】诚招高战、好战、活跃的铁汁！！！</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-id-card text-denim-medium mr-3"></i>
+                            <span>百业ID：10359265</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-bullhorn  text-denim-medium mr-3"></i>
+                            <span>打本时间：周一周二周日都有车队</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-user-circle text-denim-medium mr-3"></i>
+                            <span>参战人员活跃：2000+<br/>
+                            无参战人员活跃：3000+</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl mb-6 font-light">联系方式</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <i class="fa fa-arrow-circle-right  text-denim-medium mr-3"></i>
+                            <span>WeChat: p13935245441</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-arrow-circle-right  text-denim-medium mr-3"></i>
+                            <span>小红薯: 还在建设中···</span>
+                        </li>
+                        <li class="flex items-center">
+                           <i class="fa fa-arrow-circle-right  text-denim-medium mr-3"></i>
+                            <span>抖音: 还在建设中···</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="mt-8">
+                        <h4 class="text-xl mb-4 font-light"></h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 rounded-full bg-denim-dark flex items-center justify-center text-white hover:bg-denim-medium transition-colors">
+                                <i class="fa fa-instagram"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-denim-dark flex items-center justify-center text-white hover:bg-denim-medium transition-colors">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-denim-dark flex items-center justify-center text-white hover:bg-denim-medium transition-colors">
+                                <i class="fa fa-facebook"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="py-10 bg-denim-dark text-denim-light">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-xl font-bold mb-2">昼 | ZOOM</p>
+                    <p class="text-sm">潇洒江湖十过秋，酒杯无日不迟留。</p>
+                </div>
+                
+                <div class="text-sm text-center md:text-right">
+                    <p>&copy; 2025 昼 Co., Ltd. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+          // 视频声音控制
+const bgVideo = document.getElementById('bgVideo');
+const volumeControl = document.getElementById('volumeControl');
+const volumeIcon = volumeControl.querySelector('i');
+
+         // 初始状态为有声音（关键修改）
+bgVideo.muted = false;
+
+         // 检查浏览器实际静音状态（有些浏览器会强制自动播放视频静音）
+    function updateVolumeIcon() {
+        if (bgVideo.muted) {
+            volumeIcon.classList.remove('fa-volume-up');
+            volumeIcon.classList.add('fa-volume-off');
+        } else {
+            volumeIcon.classList.remove('fa-volume-off');
+            volumeIcon.classList.add('fa-volume-up');
+        }
+    }
+
+          // 页面加载时更新一次图标
+    updateVolumeIcon();
+
+         // 处理浏览器自动播放限制
+document.addEventListener('click', function enableSoundOnInteraction() {
+        // 尝试播放视频以激活声音
+        bgVideo.play().then(() => {
+            // 播放成功后同步状态
+            updateVolumeIcon();
+        }).catch(e => {
+            console.log('自动播放受限，需用户交互后激活声音:', e);
+            // 若浏览器强制静音，同步状态
+            bgVideo.muted = true;
+            updateVolumeIcon();
+        });
+        document.removeEventListener('click', enableSoundOnInteraction);
+    }, { once: true });
+
+    volumeControl.addEventListener('click', () => {
+        // 切换静音状态
+        bgVideo.muted = !bgVideo.muted;
+        // 同步图标状态
+        updateVolumeIcon();
+        // 确保视频在点击时处于播放状态
+        bgVideo.play().catch(e => console.log('需要用户交互才能播放声音:', e));
+    });
+  
+         // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-denim-dark/90', 'backdrop-blur', 'py-2');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.remove('bg-denim-dark/90', 'backdrop-blur', 'py-2');
+                navbar.classList.add('py-4');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            } else {
+                menuBtn.innerHTML = '<i class="fa fa-times"></i>';
+            }
+        });
+        
+        // 点击移动端菜单项后关闭菜单
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            });
+        });
+        
+        // 图片加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.classList.add('opacity-0', 'transition-opacity', 'duration-1000');
+                img.onload = function() {
+                    this.classList.remove('opacity-0');
+                    this.classList.add('opacity-100');
+                }
+                // 如果图片已经缓存
+                if (img.complete) {
+                    img.classList.remove('opacity-0');
+                    img.classList.add('opacity-100');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
